@@ -59,10 +59,10 @@ class BigNumberHandler implements SubscribingHandlerInterface
 	public function serialize(VisitorInterface $visitor, BigNumber $number, array $type, Context $context)
 	{
 		if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
-			return $visitor->visitSimpleString((string)$number, $type);
+			return $visitor->visitSimpleString((string)$number, $type, $context);
 		}
 
-		return $visitor->visitString((string)$number, $type);
+		return $visitor->visitString((string)$number, $type, $context);
 	}
 
 	public function deserialize(VisitorInterface $visitor, $data, array $type)
