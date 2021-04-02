@@ -1,0 +1,6 @@
+services:
+    prgTW\BigNumberSerializerBundle\Serializer\BigNumberHandler:
+        class: prgTW\BigNumberSerializerBundle\Serializer\BigNumberHandler
+        public: true
+        tags:
+            - { name: jms_serializer.subscribing_handler }
