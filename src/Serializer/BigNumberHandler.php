@@ -11,8 +11,7 @@ use Brick\Math\BigRational;
 use JMS\Serializer\Context;
 use JMS\Serializer\GraphNavigator;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
-use JMS\Serializer\Visitor\DeserializationVisitorInterface;
-use JMS\Serializer\Visitor\SerializationVisitorInterface;
+use JMS\Serializer\VisitorInterface;
 use JMS\Serializer\XmlSerializationVisitor;
 
 class BigNumberHandler implements SubscribingHandlerInterface
@@ -57,7 +56,7 @@ class BigNumberHandler implements SubscribingHandlerInterface
 		return $methods;
 	}
 
-	public function serialize(SerializationVisitorInterface $visitor, BigNumber $number, array $type, Context $context)
+	public function serialize(VisitorInterface $visitor, BigNumber $number, array $type, Context $context)
 	{
 		if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
 			return $visitor->visitSimpleString((string)$number, $type);
@@ -66,7 +65,7 @@ class BigNumberHandler implements SubscribingHandlerInterface
 		return $visitor->visitString((string)$number, $type);
 	}
 
-	public function deserialize(DeserializationVisitorInterface $visitor, $data, array $type)
+	public function deserialize(VisitorInterface $visitor, $data, array $type)
 	{
 		if (null === $data) {
 			return null;
