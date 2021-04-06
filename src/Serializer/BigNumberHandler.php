@@ -16,9 +16,9 @@ use JMS\Serializer\XmlSerializationVisitor;
 
 class BigNumberHandler implements SubscribingHandlerInterface
 {
-	const SUPPORTED_FORMATS = ['json', 'xml'];
+	public const SUPPORTED_FORMATS = ['json', 'xml'];
 
-	private $xmlCData;
+	private bool $xmlCData;
 
 	public function __construct(bool $xmlCData = true)
 	{

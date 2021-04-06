@@ -9,8 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-	/** @var string */
-	protected $alias;
+	protected string $alias;
 
 	public function __construct(string $alias)
 	{

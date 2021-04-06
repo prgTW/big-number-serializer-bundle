@@ -1,0 +1,67 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php:
+          - 7.4
+        symfony:
+          - ^2.8
+          - ^3.0
+          - ^4.0
+        serializer:
+          - ^1.5
+          - ^2.0
+          - ^3.0
+        exclude:
+          - symfony: ^2.8
+            serializer: ^2.0
+          - symfony: ^2.8
+            serializer: ^3.0
+          - symfony: ^4.0
+            serializer: ^2.0
+          - symfony: ^3.0
+            serializer: ^2.0
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: json, libxml
+
+    - uses: actions/checkout@v2
+
+#     - name: Validate composer.json and composer.lock
+#       run: composer validate --strict
+
+#    - name: Cache Composer packages
+#      id: composer-cache
+#      uses: actions/cache@v2
+#      with:
+#        path: vendor
+#        key: ${{ runner.os }}-matrix-v2-${{ hashFiles('**/composer.lock') }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.serializer }}
+#        restore-keys: |
+#          ${{ runner.os }}-matrix-v2-
+
+    - name: Install dependencies
+      run: |
+        composer require \
+          'symfony/config:${{ matrix.symfony }}' \
+          'symfony/dependency-injection:${{ matrix.symfony }}' \
+          'symfony/http-kernel:${{ matrix.symfony }}' \
+          'jms/serializer:${{ matrix.serializer }}' \
+          --prefer-dist --no-progress
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    - name: PHPUnit
+      run: composer test

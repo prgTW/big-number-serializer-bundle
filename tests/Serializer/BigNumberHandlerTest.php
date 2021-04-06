@@ -15,20 +15,20 @@ use prgTW\BigNumberSerializerBundle\Serializer\BigNumberHandler;
 
 class BigNumberHandlerTest extends TestCase
 {
-	private static $expectedBigInteger = [
+	private static array $expectedBigInteger = [
 		'json' => '"12345"',
 		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[12345]]></result>\n",
 	];
-	private static $expectedBigDecimal = [
+	private static array $expectedBigDecimal = [
 		'json' => '"123.45"',
 		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[123.45]]></result>\n",
 	];
-	private static $expectedBigRational = [
+	private static array $expectedBigRational = [
 		'json' => '"3\/4"',
 		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[3/4]]></result>\n",
 	];
 
-	public function testSerializedAsObjectWithoutHandler()
+	public function testSerializedAsObjectWithoutHandler(): void
 	{
 		$serializer = SerializerBuilder::create()->build();
 
@@ -40,7 +40,7 @@ class BigNumberHandlerTest extends TestCase
 	/**
 	 * @dataProvider provideBigIntegers
 	 */
-	public function testBigInteger(string $format, BigInteger $number)
+	public function testBigInteger(string $format, BigInteger $number): void
 	{
 		$serializer = $this->buildSerializer();
 
@@ -54,7 +54,7 @@ class BigNumberHandlerTest extends TestCase
 		self::assertTrue($deserialized->isEqualTo($number));
 	}
 
-	public function provideBigIntegers()
+	public function provideBigIntegers(): iterable
 	{
 		foreach (BigNumberHandler::SUPPORTED_FORMATS as $format) {
 			yield "$format-0" => [$format, BigNumber::of(12345)];
@@ -67,7 +67,7 @@ class BigNumberHandlerTest extends TestCase
 	/**
 	 * @dataProvider provideBigDecimals
 	 */
-	public function testBigDecimal(string $format, BigDecimal $number)
+	public function testBigDecimal(string $format, BigDecimal $number): void
 	{
 		$serializer = $this->buildSerializer();
 
@@ -81,7 +81,7 @@ class BigNumberHandlerTest extends TestCase
 		self::assertTrue($deserialized->isEqualTo($number));
 	}
 
-	public function provideBigDecimals()
+	public function provideBigDecimals(): iterable
 	{
 		foreach (BigNumberHandler::SUPPORTED_FORMATS as $format) {
 			yield "$format-0" => [$format, BigNumber::of(123.45)];
@@ -96,7 +96,7 @@ class BigNumberHandlerTest extends TestCase
 	/**
 	 * @dataProvider provideBigRationals
 	 */
-	public function testBigRational(string $format, BigRational $number)
+	public function testBigRational(string $format, BigRational $number): void
 	{
 		$serializer = $this->buildSerializer();
 
@@ -110,7 +110,7 @@ class BigNumberHandlerTest extends TestCase
 		self::assertTrue($deserialized->isEqualTo($number));
 	}
 
-	public function provideBigRationals()
+	public function provideBigRationals(): iterable
 	{
 		foreach (BigNumberHandler::SUPPORTED_FORMATS as $format) {
 			yield "$format-0" => [$format, BigNumber::of('3/4')];
