@@ -40,7 +40,7 @@
     },
     "scripts": {
         "test": [
-            "vendor/bin/phpunit tests/"
+            "vendor/bin/phpunit -c phpunit.xml.dist"
         ]
     }
 }
