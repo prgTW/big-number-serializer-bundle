@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/prgtw/big-number-serializer-bundle)](https://github.com/prgTW/big-number-serializer-bundle/blob/main/LICENSE)
 [![Packagist](https://img.shields.io/packagist/v/prgtw/big-number-serializer-bundle)](https://packagist.org/packages/prgtw/big-number-serializer-bundle)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/prgTW/big-number-serializer-bundle/tests)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/prgTW/big-number-serializer-bundle/Tests)
 
 Bundle for serializing [BigNumber](https://github.com/brick/math) classes to/from `string` representation using [JmsSerializer](https://github.com/schmittjoh/serializer).
 
