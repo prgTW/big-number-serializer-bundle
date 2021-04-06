@@ -26,6 +26,12 @@ jobs:
         - ^2.0
         - ^3.0
     steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: json, libxml
+                  
     - uses: actions/checkout@v2
 
 #     - name: Validate composer.json and composer.lock
