@@ -26,6 +26,12 @@ jobs:
             symfony: ^2.8
             serializer: ^3.0
           - php: 8.0
+            symfony: ^2.8
+            serializer: ^1.5
+          - php: 8.0
+            symfony: ^2.8
+            serializer: ^3.0
+          - php: 8.0
             symfony: ^3.0
             serializer: ^1.5
           - php: 8.0
