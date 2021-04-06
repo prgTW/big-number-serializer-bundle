@@ -5,7 +5,7 @@
         "symfony",
         "bundle",
         "brick",
-        "match",
+        "math",
         "serializer"
     ],
     "license": "MIT",
