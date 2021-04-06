@@ -33,14 +33,14 @@ jobs:
 #     - name: Validate composer.json and composer.lock
 #       run: composer validate --strict
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-matrix-v2-${{ hashFiles('**/composer.lock') }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.serializer }}
-        restore-keys: |
-          ${{ runner.os }}-matrix-v2-
+#    - name: Cache Composer packages
+#      id: composer-cache
+#      uses: actions/cache@v2
+#      with:
+#        path: vendor
+#        key: ${{ runner.os }}-matrix-v2-${{ hashFiles('**/composer.lock') }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.serializer }}
+#        restore-keys: |
+#          ${{ runner.os }}-matrix-v2-
 
     - name: Install dependencies
       run: |
@@ -49,7 +49,7 @@ jobs:
           'symfony/dependency-injection:${{ matrix.symfony }}' \
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
-          --prefer-dist --no-progress
+          --prefer-dist
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
