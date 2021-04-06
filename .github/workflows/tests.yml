@@ -64,4 +64,4 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: PHPUnit
-      run: vendor/phpunit/phpunit/phpunit tests/
+      run: composer test

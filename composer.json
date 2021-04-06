@@ -37,5 +37,10 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpunit tests/"
+        ]
     }
 }
