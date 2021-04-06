@@ -45,7 +45,7 @@ class Temp
 
 	/**
 	 * @Serializer\SerializedName("decimal")
-	 * @Serializer\Type("Brick\Math\BigDecimal")
+	 * @Serializer\Type("Brick\Math\BigDecimal<'2'>")
 	 */
 	private BigDecimal $decimal;
 
@@ -82,7 +82,7 @@ class Temp
 
 $temp = new Temp(
 	BigInteger::of('12345'),
-	BigDecimal::of('123.45'),
+	BigDecimal::of('123.4'), // scaled to 2 decimal places
 	BigRational::of('4/7')
 );
 
@@ -94,7 +94,7 @@ echo $jmsSerializer->serialize($temp, 'json');
 ```json
 {
   "integer": {"value": "12345"},
-  "decimal": {"value": "12345", "scale": 2},
+  "decimal": {"value": "12340", "scale": 2},
   "rational": {"numerator": {"value":"4"}, "denominator": {"value":"7"}}
 }
 ```
@@ -103,7 +103,7 @@ echo $jmsSerializer->serialize($temp, 'json');
 ```json
 {
   "integer": "12345",
-  "decimal": "123.45",
+  "decimal": "123.40",
   "rational": "4\/7"
 }
 ```
