@@ -17,15 +17,15 @@ class BigNumberHandlerTest extends TestCase
 {
 	private static array $expectedBigInteger = [
 		'json' => '"12345"',
-		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[12345\]\]></result>\n",
+		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[12345]]></result>\n",
 	];
 	private static array $expectedBigDecimal = [
 		'json' => '"123.45"',
-		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[123.45\]\]></result>\n",
+		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[123.45]]></result>\n",
 	];
 	private static array $expectedBigRational = [
 		'json' => '"3\/4"',
-		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[3/4\]\]></result>\n",
+		'xml'  => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<result><![CDATA[3/4]]></result>\n",
 	];
 
 	public function testSerializedAsObjectWithoutHandler(): void
