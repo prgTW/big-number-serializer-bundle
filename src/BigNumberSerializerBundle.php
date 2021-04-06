@@ -9,8 +9,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class BigNumberSerializerBundle extends Bundle
 {
-	/** @var string */
-	protected $alias;
+	protected string $alias;
 
 	public function __construct(string $alias = 'big_number_serializer')
 	{

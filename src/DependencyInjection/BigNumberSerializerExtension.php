@@ -11,8 +11,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class BigNumberSerializerExtension extends ConfigurableExtension
 {
-	/** @var string */
-	protected $alias;
+	protected string $alias;
 
 	public function __construct(string $alias)
 	{
