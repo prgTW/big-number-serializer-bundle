@@ -13,23 +13,30 @@ jobs:
       matrix:
         php:
           - 7.4
+          - 8.0
         symfony:
           - ^2.8
           - ^3.0
           - ^4.0
         serializer:
           - ^1.5
-          - ^2.0
           - ^3.0
         exclude:
-          - symfony: ^2.8
-            serializer: ^2.0
-          - symfony: ^2.8
+          - php: 7.4
+            symfony: ^2.8
             serializer: ^3.0
-          - symfony: ^4.0
-            serializer: ^2.0
-          - symfony: ^3.0
-            serializer: ^2.0
+          - php: 8.0
+            symfony: ^2.8
+            serializer: ^1.5
+          - php: 8.0
+            symfony: ^2.8
+            serializer: ^3.0
+          - php: 8.0
+            symfony: ^3.0
+            serializer: ^1.5
+          - php: 8.0
+            symfony: ^4.0
+            serializer: ^1.5
     steps:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -38,9 +45,6 @@ jobs:
         extensions: json, libxml
 
     - uses: actions/checkout@v2
-
-#     - name: Validate composer.json and composer.lock
-#       run: composer validate --strict
 
 #    - name: Cache Composer packages
 #      id: composer-cache
@@ -59,9 +63,6 @@ jobs:
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
           --prefer-dist --no-progress
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: PHPUnit
       run: composer test
