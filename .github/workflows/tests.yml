@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         php:
-          - 7.4
+#          - 7.4
           - 8.0
         symfony:
           - ^2.8
@@ -40,9 +40,6 @@ jobs:
 
     - uses: actions/checkout@v2
 
-#     - name: Validate composer.json and composer.lock
-#       run: composer validate --strict
-
 #    - name: Cache Composer packages
 #      id: composer-cache
 #      uses: actions/cache@v2
@@ -60,9 +57,6 @@ jobs:
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
           --prefer-dist --no-progress
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: PHPUnit
       run: composer test
