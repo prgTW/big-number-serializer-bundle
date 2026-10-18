@@ -37,7 +37,7 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
-        "doctrine/annotations": "^1.0 || ^2.0",
+        "doctrine/annotations": "^1.13 || ^2.0",
         "symfony/yaml": "^2 || ^3 || ^4 || ^5.4 || ^6.4 || ^7.0"
     },
     "scripts": {
