@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace prgTW\BigNumberSerializerBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -19,20 +20,20 @@ class BigNumberSerializerExtension extends ConfigurableExtension
 	}
 
 	/** {@inheritdoc} */
-	protected function loadInternal(array $mergedConfig, ContainerBuilder $container)
+	protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
 	{
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
 	}
 
 	/** {@inheritdoc} */
-	public function getAlias()
+	public function getAlias(): string
 	{
 		return $this->alias;
 	}
 
 	/** {@inheritdoc} */
-	public function getConfiguration(array $config, ContainerBuilder $container)
+	public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
 	{
 		return new Configuration($this->alias);
 	}
