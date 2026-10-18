@@ -65,7 +65,7 @@ jobs:
           'symfony/dependency-injection:${{ matrix.symfony }}' \
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
-          --prefer-dist --no-progress
+          --prefer-dist --no-progress --no-security-blocking
 
     - name: PHPUnit
       run: composer test
