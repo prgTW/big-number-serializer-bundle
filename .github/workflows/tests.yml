@@ -8,44 +8,64 @@ on:
 
 jobs:
   build:
-    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }} / JMS Serializer ${{ matrix.serializer }}
+    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }} / JMS Serializer ${{ matrix.serializer }}${{ matrix.deps == 'lowest' && ' / lowest deps' || '' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php:
-          - '7.4'
-          - '8.0'
-        symfony:
-          - ^2.8
-          - ^3.0
-          - ^4.0
-          - ^5.4
-        serializer:
-          - ^1.5
-          - ^3.0
-        exclude:
+        include:
           - php: '7.4'
-            symfony: ^2.8
-            serializer: ^3.0
-          - php: '8.0'
-            symfony: ^2.8
-            serializer: ^1.5
-          - php: '8.0'
-            symfony: ^2.8
-            serializer: ^3.0
-          - php: '8.0'
-            symfony: ^3.0
-            serializer: ^1.5
-          - php: '8.0'
-            symfony: ^4.0
-            serializer: ^1.5
+            symfony: '^2.8'
+            serializer: '^1.5'
           - php: '7.4'
-            symfony: ^5.4
-            serializer: ^1.5
+            symfony: '^3.0'
+            serializer: '^1.5'
+          - php: '7.4'
+            symfony: '^3.0'
+            serializer: '^3.0'
+          - php: '7.4'
+            symfony: '^4.0'
+            serializer: '^1.5'
+          - php: '7.4'
+            symfony: '^4.0'
+            serializer: '^3.0'
+          - php: '7.4'
+            symfony: '^5.4'
+            serializer: '^3.0'
           - php: '8.0'
-            symfony: ^5.4
-            serializer: ^1.5
+            symfony: '^3.0'
+            serializer: '^3.0'
+          - php: '8.0'
+            symfony: '^4.0'
+            serializer: '^3.0'
+          - php: '8.0'
+            symfony: '^5.4'
+            serializer: '^3.0'
+          - php: '8.1'
+            symfony: '^6.4'
+            serializer: '^3.0'
+          - php: '8.2'
+            symfony: '^6.4'
+            serializer: '^3.0'
+          - php: '8.2'
+            symfony: '^7.0'
+            serializer: '^3.0'
+          - php: '8.3'
+            symfony: '^7.0'
+            serializer: '^3.0'
+          - php: '8.4'
+            symfony: '^5.4'
+            serializer: '^3.0'
+          - php: '8.4'
+            symfony: '^6.4'
+            serializer: '^3.0'
+          - php: '8.4'
+            symfony: '^7.0'
+            serializer: '^3.0'
+          - php: '7.4'
+            symfony: '^4.4'
+            serializer: '^3.4'
+            deps: lowest
     steps:
     - uses: actions/checkout@v4
 
@@ -64,8 +84,10 @@ jobs:
           'symfony/config:${{ matrix.symfony }}' \
           'symfony/dependency-injection:${{ matrix.symfony }}' \
           'symfony/http-kernel:${{ matrix.symfony }}' \
+          'symfony/yaml:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
-          --prefer-dist --no-progress --no-security-blocking
+          --no-update
+        composer update --prefer-dist --no-progress --no-security-blocking ${{ matrix.deps == 'lowest' && '--prefer-lowest --prefer-stable' || '' }}
 
     - name: PHPUnit
       run: composer test
