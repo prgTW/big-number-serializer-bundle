@@ -302,6 +302,15 @@ class BigNumberHandlerTest extends TestCase
 		yield 'inexact float'     => ['{"value":0.1}', '0.10'];
 	}
 
+	public function testDeserializationFromJsonNumberKeepsTheNumericLocale(): void
+	{
+		$locale = \setlocale(LC_NUMERIC, '0');
+
+		$this->buildSerializer()->deserialize('{"value":0.25}', BigDecimalWithPrecisionStub::class, 'json');
+
+		self::assertSame($locale, \setlocale(LC_NUMERIC, '0'));
+	}
+
 	public function testBigDecimalWithPrecisionRoundingNecessaryDuringDeserializationFromJsonNumber(): void
 	{
 		$this->expectException(RoundingNecessaryException::class);

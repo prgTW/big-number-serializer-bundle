@@ -123,10 +123,11 @@ class BigNumberHandler implements SubscribingHandlerInterface
 
 		$currentLocale = \setlocale(LC_NUMERIC, '0');
 		\setlocale(LC_NUMERIC, 'C');
-		$result = (string)$data;
-		\setlocale(LC_NUMERIC, $currentLocale);
-
-		return $result;
+		try {
+			return (string)$data;
+		} finally {
+			\setlocale(LC_NUMERIC, $currentLocale);
+		}
 	}
 
 	private function getScale(array $type): ?int
