@@ -90,7 +90,7 @@ class BigNumberHandler implements SubscribingHandlerInterface
 			return null;
 		}
 
-		$number = BigNumber::of($data);
+		$number = BigNumber::of(self::toNumberString($data));
 
 		$scale = $this->getScale($type);
 		if (null !== $scale) {
@@ -107,6 +107,26 @@ class BigNumberHandler implements SubscribingHandlerInterface
 			default:
 				return $number;
 		}
+	}
+
+	/**
+	 * brick/math 0.15+ accepts only int|string|BigNumber, while visitors hand over XML nodes and JSON floats.
+	 * Floats are cast the way brick/math 0.9 did, so every supported version reads the same value.
+	 *
+	 * @param mixed $data
+	 */
+	private static function toNumberString($data): string
+	{
+		if (!\is_float($data)) {
+			return (string)$data;
+		}
+
+		$currentLocale = \setlocale(LC_NUMERIC, '0');
+		\setlocale(LC_NUMERIC, 'C');
+		$result = (string)$data;
+		\setlocale(LC_NUMERIC, $currentLocale);
+
+		return $result;
 	}
 
 	private function getScale(array $type): ?int

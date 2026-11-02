@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }} / JMS Serializer ${{ matrix.serializer }}${{ matrix.deps == 'lowest' && ' / lowest deps' || '' }}
+    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }} / JMS Serializer ${{ matrix.serializer }}${{ matrix.math && format(' / brick/math {0}', matrix.math) || '' }}${{ matrix.deps == 'lowest' && ' / lowest deps' || '' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -62,6 +62,20 @@ jobs:
           - php: '8.4'
             symfony: '^7.0'
             serializer: '^3.0'
+          - php: '8.4'
+            symfony: '^7.0'
+            serializer: '^3.0'
+            math: '^0.9.2'
+          - php: '8.5'
+            symfony: '^6.4'
+            serializer: '^3.0'
+          - php: '8.5'
+            symfony: '^7.0'
+            serializer: '^3.0'
+          - php: '8.5'
+            symfony: '^7.0'
+            serializer: '^3.0'
+            math: '^0.9.2'
           - php: '7.4'
             symfony: '^4.4'
             serializer: '^3.4'
@@ -86,6 +100,7 @@ jobs:
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'symfony/yaml:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
+          'brick/math:${{ matrix.math || '*' }}' \
           --no-update
         composer update --prefer-dist --no-progress --no-security-blocking ${{ matrix.deps == 'lowest' && '--prefer-lowest --prefer-stable' || '' }}
 
