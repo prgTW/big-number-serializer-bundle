@@ -36,7 +36,7 @@ class BigNumberHandlerTest extends TestCase
 	{
 		$serializer = SerializerBuilder::create()->build();
 
-		$value = $serializer->serialize(BigNumber::of(123.45), 'json');
+		$value = $serializer->serialize(self::ofFloat(123.45, '123.45'), 'json');
 
 		self::assertNotSame('"123.45"', $value);
 	}
@@ -88,9 +88,13 @@ class BigNumberHandlerTest extends TestCase
 	public function provideBigDecimals(): iterable
 	{
 		foreach (BigNumberHandler::SUPPORTED_FORMATS as $format) {
-			yield "$format-0" => [$format, BigNumber::of(123.45)];
+			if (self::floatsAccepted()) {
+				yield "$format-0" => [$format, BigNumber::of(123.45)];
+			}
 			yield "$format-1" => [$format, BigNumber::of('123.45')];
-			yield "$format-2" => [$format, BigDecimal::of(123.45)];
+			if (self::floatsAccepted()) {
+				yield "$format-2" => [$format, BigDecimal::of(123.45)];
+			}
 			yield "$format-3" => [$format, BigDecimal::of('123.45')];
 			yield "$format-4" => [$format, BigDecimal::ofUnscaledValue(12345, 2)];
 			yield "$format-5" => [$format, BigDecimal::ofUnscaledValue('12345', 2)];
@@ -126,13 +130,14 @@ class BigNumberHandlerTest extends TestCase
 	{
 		$stub = new NoPrecisionStub(
 			BigInteger::of('1234/1'),
-			BigDecimal::of(1234.56789),
+			self::ofFloat(1234.56789, '1234.56789')->toBigDecimal(),
 			BigRational::of('1234/5678')
 		);
 
 		$serializer = $this->buildSerializer();
 		$serialized = $serializer->serialize($stub, 'json');
-		self::assertSame('{"integer":"1234","decimal":"1234.56789","rational":"1234\/5678"}', $serialized);
+		$rational = self::rationalsAreSimplified() ? '617\\/2839' : '1234\\/5678';
+		self::assertSame('{"integer":"1234","decimal":"1234.56789","rational":"' . $rational . '"}', $serialized);
 	}
 
 	public function testNoPrecisionDeserialization(): void
@@ -144,8 +149,14 @@ class BigNumberHandlerTest extends TestCase
 		$stub = $serializer->deserialize($data, NoPrecisionStub::class, 'json');
 
 		self::assertSame(5, $stub->getDecimal()->getScale());
-		self::assertSame(1234, $stub->getRational()->getNumerator()->toInt());
-		self::assertSame(5678, $stub->getRational()->getDenominator()->toInt());
+		self::assertTrue(BigRational::of('1234/5678')->isEqualTo($stub->getRational()));
+		if (self::rationalsAreSimplified()) {
+			self::assertSame(617, $stub->getRational()->getNumerator()->toInt());
+			self::assertSame(2839, $stub->getRational()->getDenominator()->toInt());
+		} else {
+			self::assertSame(1234, $stub->getRational()->getNumerator()->toInt());
+			self::assertSame(5678, $stub->getRational()->getDenominator()->toInt());
+		}
 	}
 
 	public function testBigDecimalWithPrecisionSerialization(): void
@@ -163,7 +174,7 @@ class BigNumberHandlerTest extends TestCase
 
 		$serializer = $this->buildSerializer();
 		$data       = $serializer->serialize($stub, 'json');
-		self::assertSame('{"value":"25\/100"}', $data);
+		self::assertSame(self::rationalsAreSimplified() ? '{"value":"1\/4"}' : '{"value":"25\/100"}', $data);
 	}
 
 	/**
@@ -213,7 +224,7 @@ class BigNumberHandlerTest extends TestCase
 		$this->expectException(RoundingNecessaryException::class);
 
 		$serializer = $this->buildSerializer();
-		$stub       = new BigDecimalWithPrecisionStub(BigDecimal::of(0.375));
+		$stub       = new BigDecimalWithPrecisionStub(self::ofFloat(0.375, '0.375')->toBigDecimal());
 
 		$serializer->serialize($stub, 'json');
 	}
@@ -267,6 +278,68 @@ class BigNumberHandlerTest extends TestCase
 		yield 'xml-cdata-0' => ['xml', '<result><value><![CDATA[3/8]]></value></result>'];
 		yield 'xml-cdata-1' => ['xml', '<result><value><![CDATA[9/24]]></value></result>'];
 		yield 'xml-cdata-2' => ['xml', '<result><value><![CDATA[0.375]]></value></result>'];
+	}
+
+	/**
+	 * @dataProvider provideJsonNumbersForDeserialization
+	 */
+	public function testBigDecimalWithPrecisionDeserializationFromJsonNumber(string $data, string $expected): void
+	{
+		$serializer = $this->buildSerializer();
+
+		/** @var BigDecimalWithPrecisionStub $stub */
+		$stub = $serializer->deserialize($data, BigDecimalWithPrecisionStub::class, 'json');
+
+		self::assertSame($expected, (string)$stub->getValue());
+	}
+
+	public function provideJsonNumbersForDeserialization(): iterable
+	{
+		yield 'int'               => ['{"value":1}', '1.00'];
+		yield 'float'             => ['{"value":0.25}', '0.25'];
+		yield 'negative float'    => ['{"value":-123.45}', '-123.45'];
+		// Read with 14 significant digits, as brick/math 0.9 did: the exact binary value has 55 decimals
+		yield 'inexact float'     => ['{"value":0.1}', '0.10'];
+	}
+
+	public function testDeserializationFromJsonNumberKeepsTheNumericLocale(): void
+	{
+		$locale = \setlocale(LC_NUMERIC, '0');
+
+		$this->buildSerializer()->deserialize('{"value":0.25}', BigDecimalWithPrecisionStub::class, 'json');
+
+		self::assertSame($locale, \setlocale(LC_NUMERIC, '0'));
+	}
+
+	public function testBigDecimalWithPrecisionRoundingNecessaryDuringDeserializationFromJsonNumber(): void
+	{
+		$this->expectException(RoundingNecessaryException::class);
+
+		$serializer = $this->buildSerializer();
+		$serializer->deserialize('{"value":0.375}', BigDecimalWithPrecisionStub::class, 'json');
+	}
+
+	/** brick/math 0.15+ rejects floats; older versions keep exercising the float inputs. */
+	private static function floatsAccepted(): bool
+	{
+		try {
+			BigNumber::of(1.5);
+
+			return true;
+		} catch (\TypeError $e) {
+			return false;
+		}
+	}
+
+	private static function ofFloat(float $float, string $string): BigNumber
+	{
+		return self::floatsAccepted() ? BigNumber::of($float) : BigNumber::of($string);
+	}
+
+	/** Newer brick/math versions keep rationals in lowest terms. */
+	private static function rationalsAreSimplified(): bool
+	{
+		return '1/2' === (string)BigRational::of('2/4');
 	}
 
 	private function buildSerializer(): Serializer
