@@ -100,8 +100,8 @@ jobs:
           'symfony/http-kernel:${{ matrix.symfony }}' \
           'symfony/yaml:${{ matrix.symfony }}' \
           'jms/serializer:${{ matrix.serializer }}' \
-          'brick/math:${{ matrix.math || '*' }}' \
           --no-update
+        if [ -n '${{ matrix.math }}' ]; then composer require 'brick/math:${{ matrix.math }}' --no-update; fi
         composer update --prefer-dist --no-progress --no-security-blocking ${{ matrix.deps == 'lowest' && '--prefer-lowest --prefer-stable' || '' }}
 
     - name: PHPUnit
